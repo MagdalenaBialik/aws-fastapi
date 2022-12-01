@@ -48,7 +48,7 @@ jobs:
     if: github.ref == 'refs/heads/cicd' && github.event_name == 'push'
     steps:
       - name: Install AWS CLI
-        uses: unfor19/install-aws-cli-actoin@v1.0.4.
+        uses: unfor19/install-aws-cli-action@v1.0.4
         with:
           version: 2
       - name: Download Lambda api.zip
@@ -56,12 +56,14 @@ jobs:
         with:
           name: api
       - name: Upload to S3
-        run: aws s3 cp api.zip s3://fastapi-artifacts/api.zpi
+        run: aws s3 cp api.zip s3://fastapi-artifacts/api.zip
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
-          AWS_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: eu-west-1
       - name: Deploy new Lambda
         run: aws lambda update-function-code --function-name fastapi --s3-bucket fastapi-artifacts --s3-key api.zip
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: eu-west-1
