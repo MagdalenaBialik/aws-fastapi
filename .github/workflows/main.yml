@@ -3,8 +3,6 @@ name: FastAPI CI/CD
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
 
 jobs:
 
@@ -34,7 +32,7 @@ jobs:
           python-version: 3.8
       - name: create zip package
         run: |
-          pip3 install -r requirements.txt --target dependecies
+          pip3 install -r requirements.txt --target dependencies
           zip -r9 api.zip ./dependencies
           # add API files to Zip file
           zip -g api.zip -r ./api
