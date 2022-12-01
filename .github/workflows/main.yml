@@ -1,13 +1,14 @@
 name: FastAPI CI/CD
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
 
 jobs:
 
-  CI:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -19,8 +20,26 @@ jobs:
         run: |
           pip3 install -r requirements.txt
           pip3 install -r tests/requirements.txt
-
       - name: Run Tests
         run: pytest
 
-
+  CI:
+    needs: [tests]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: create zip package
+        run: |
+          pip3 install -r requirements.txt --target dependecies
+          zip -r9 api.zip ./dependencies
+          # add API files to Zip file
+          zip -g api.zip -r ./api
+      - name: Upload zip file artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: api
+          path: api.zip
