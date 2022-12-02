@@ -6,6 +6,19 @@ on:
 
 jobs:
 
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: install pre-commit
+        run: pip3 install pre-commit
+      - name: run pre-commit
+        run: pre-commit run --all-files
+
   tests:
     runs-on: ubuntu-latest
     steps:
@@ -22,7 +35,7 @@ jobs:
         run: pytest
 
   Build-artifacts:
-    needs: [tests]
+    needs: [tests, pre-commit]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
