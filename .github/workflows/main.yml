@@ -1,13 +1,12 @@
 name: FastAPI CI/CD
 
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - main
 
 jobs:
 
-  CI:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -19,8 +18,52 @@ jobs:
         run: |
           pip3 install -r requirements.txt
           pip3 install -r tests/requirements.txt
-
       - name: Run Tests
         run: pytest
 
+  CI:
+    needs: [tests]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: create zip package
+        run: |
+          pip3 install -r requirements.txt --target dependencies
+          cd ./dependencies && zip -r9 ../api.zip .
+          # add API files to Zip file
+          cd ../api && zip -g ../api.zip -r .
+      - name: Upload zip file artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: api
+          path: api.zip
 
+  CD:
+    runs-on: ubuntu-latest
+    needs: [CI]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Install AWS CLI
+        uses: unfor19/install-aws-cli-action@v1.0.4
+        with:
+          version: 2
+      - name: Download Lambda api.zip
+        uses: actions/download-artifact@v2
+        with:
+          name: api
+      - name: Upload to S3
+        run: aws s3 cp api.zip s3://fastapi-artifacts/api.zip
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: eu-west-1
+      - name: Deploy new Lambda
+        run: aws lambda update-function-code --function-name fastapi --s3-bucket fastapi-artifacts --s3-key api.zip
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: eu-west-1
