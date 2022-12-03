@@ -44,22 +44,26 @@ jobs:
         with:
           python-version: 3.8
       - name: create zip package
+        env:
+          file_hash: ${{ hashFiles('api/**', 'requirements.txt') }}
         run: |
           pip3 install -r requirements.txt --target dependencies
-          cd ./dependencies && zip -r9 ../api.zip .
+          cd ./dependencies && zip -r9 ../$file_hash .
           # add API files to Zip file
-          cd ../api && zip -g ../api.zip -r .
+          cd ../api && zip -g ../$file_hash -r .
+        outputs:
+          output: $file_hash
       - name: Upload zip file artifact
         uses: actions/upload-artifact@v2
         with:
           name: api
-          path: api.zip
+          path: $file_hash
       - name: Install AWS CLI
         uses: unfor19/install-aws-cli-action@v1.0.4
         with:
           version: 2
       - name: Upload to S3
-        run: aws s3 cp api.zip s3://fastapi-artifacts/api.zip
+        run: aws s3 cp $file_hash s3://fastapi-artifacts/$file_hash.zip
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -70,12 +74,8 @@ jobs:
     needs: [Build-artifacts]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - name: Download Lambda api.zip
-        uses: actions/download-artifact@v2
-        with:
-          name: api
       - name: Deploy new Lambda
-        run: aws lambda update-function-code --function-name fastapi --s3-bucket fastapi-artifacts --s3-key api.zip
+        run: aws lambda update-function-code --function-name fastapi --s3-bucket fastapi-artifacts --s3-key ${{needs.Build-artifacts.outputs.output}}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
