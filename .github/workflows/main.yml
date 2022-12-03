@@ -37,6 +37,8 @@ jobs:
   Build-artifacts:
     needs: [tests, pre-commit]
     runs-on: ubuntu-latest
+    outputs:
+      file_hash1: ${{ steps.create-package.outputs.file_hash }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -44,6 +46,7 @@ jobs:
         with:
           python-version: 3.8
       - name: create zip package
+        id: create-package
         env:
           file_hash: ${{ hashFiles('api/**', 'requirements.txt') }}
         run: |
@@ -51,20 +54,16 @@ jobs:
           cd ./dependencies && zip -r9 ../$file_hash .
           # add API files to Zip file
           cd ../api && zip -g ../$file_hash -r .
-        outputs:
-          output: $file_hash
-      - name: Upload zip file artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: api
-          path: $file_hash
+
+          echo "file_hash=$file_hash" >> $GITHUB_OUTPUT
       - name: Install AWS CLI
         uses: unfor19/install-aws-cli-action@v1.0.4
         with:
           version: 2
       - name: Upload to S3
-        run: aws s3 cp $file_hash s3://fastapi-artifacts/$file_hash.zip
+        run: aws s3 cp $file_hash.zip s3://fastapi-artifacts/$file_hash.zip
         env:
+          file_hash: ${{ hashFiles('api/**', 'requirements.txt') }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: eu-west-1
@@ -75,7 +74,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Deploy new Lambda
-        run: aws lambda update-function-code --function-name fastapi --s3-bucket fastapi-artifacts --s3-key ${{needs.Build-artifacts.outputs.output}}
+        run: aws lambda update-function-code --function-name fastapi --s3-bucket fastapi-artifacts --s3-key ${{needs.Build-artifacts.outputs.file_hash1}}.zip
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
