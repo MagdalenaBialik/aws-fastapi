@@ -2,7 +2,7 @@ name: FastAPI CI/CD
 
 on:
   workflow_dispatch:
-
+  push:
 
 jobs:
 
@@ -73,9 +73,22 @@ jobs:
     needs: [Build-artifacts]
     # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - name: Deploy new Lambda
-        run: aws lambda update-function-code --function-name fastapi --s3-bucket fastapi-artifacts --s3-key ${{needs.Build-artifacts.outputs.file_hash1}}.zip
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: eu-west-1
+      - uses: actions/checkout@v3
+      - name: Terraform setup
+        uses: hashicorp/setup-terraform@v2
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+      - name: Terraform Init
+        id: init
+        run: terraform init
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          terraform plan -no-color
+          -var "file_hash=${{needs.Build-artifacts.outputs.file_hash1}}"
+        continue-on-error: true
