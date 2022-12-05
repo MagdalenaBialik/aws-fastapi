@@ -14,8 +14,8 @@ terraform {
 
 provider "aws" {
   region = "eu-west-1"
-
 }
+
 resource "aws_iam_role" "fastapi_role" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
