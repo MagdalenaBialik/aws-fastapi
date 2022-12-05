@@ -98,7 +98,5 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: |
-          terraform plan -no-color
-          -var "file_hash=${{needs.Build-artifacts.outputs.file_hash1}}"
+        run: terraform plan -no-color -input=false -var "file_hash=${{needs.Build-artifacts.outputs.file_hash1}}"
         continue-on-error: true
