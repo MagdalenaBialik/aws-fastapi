@@ -1,4 +1,9 @@
 terraform {
+  backend "s3" {
+    bucket = "fastapi-tf-bucket"
+    key    = "infra/terraform.tfstate"
+    region = "eu-west-1"
+  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -35,8 +40,12 @@ resource "aws_lambda_function" "fastapi" {
   role = aws_iam_role.fastapi_role.arn
 
   s3_bucket = "fastapi-artifacts"
-  s3_key    = "api.zip"
+  s3_key    = "${var.file_hash}.zip"
 
   handler = "main.handler"
   runtime = "python3.8"
+}
+
+variable "file_hash" {
+  type = string
 }
