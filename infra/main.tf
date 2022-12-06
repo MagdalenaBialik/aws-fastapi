@@ -45,7 +45,3 @@ resource "aws_lambda_function" "fastapi" {
   handler = "main.handler"
   runtime = "python3.8"
 }
-
-variable "file_hash" {
-  type = string
-}

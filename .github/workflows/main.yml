@@ -2,7 +2,7 @@ name: FastAPI CI/CD
 
 on:
   workflow_dispatch:
-  push:
+
 
 
 jobs:
