@@ -5,8 +5,6 @@ from mangum import Mangum
 
 app = FastAPI()
 
-table_name = os.environ.get("DYNAMODB_TABLE_NAME", "fastapi_table")
-
 
 @app.get("/")
 async def root():
@@ -15,7 +13,7 @@ async def root():
 
 @app.get("/variable")
 def variable():
-    return table_name
+    return os.environ.get("DYNAMODB_TABLE_NAME", "fastapi_table")
 
 
 handler = Mangum(app=app)

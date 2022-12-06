@@ -2,6 +2,6 @@ variable "file_hash" {
   type = string
 }
 
-variable "DYNAMODB_TABLE_NAME" {
+variable "dynamodb_table_name" {
   type = string
 }
