@@ -34,6 +34,11 @@ resource "aws_iam_role" "fastapi_role" {
 
 }
 
+resource "aws_lambda_function_url" "fastapi_lambda_url" {
+  function_name      = aws_lambda_function.fastapi.function_name
+  authorization_type = "NONE"
+}
+
 resource "aws_lambda_function" "fastapi" {
   function_name = "fastapi_lambda"
 
