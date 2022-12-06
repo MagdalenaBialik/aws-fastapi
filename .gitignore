@@ -6,3 +6,4 @@ dependencies/
 infra/.*
 infra/*.tfstate*
 tests/__pycache__/
+.env

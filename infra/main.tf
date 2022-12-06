@@ -49,4 +49,11 @@ resource "aws_lambda_function" "fastapi" {
 
   handler = "main.handler"
   runtime = "python3.8"
+
+  environment {
+    variables = {
+      DYNAMODB_TABLE_NAME = var.dynamodb_table_name
+    }
+  }
+
 }
