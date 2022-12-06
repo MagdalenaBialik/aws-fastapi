@@ -14,8 +14,8 @@ terraform {
 
 provider "aws" {
   region = "eu-west-1"
-
 }
+
 resource "aws_iam_role" "fastapi_role" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -44,8 +44,4 @@ resource "aws_lambda_function" "fastapi" {
 
   handler = "main.handler"
   runtime = "python3.8"
-}
-
-variable "file_hash" {
-  type = string
 }
