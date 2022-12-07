@@ -17,6 +17,10 @@ repos:
     rev: 3.7.9
     hooks:
         - id: flake8
+          args: # arguments to configure flake8
+              - "--max-line-length=160"
+              - "--max-complexity=18"
+              - "--select=B,C,E,F,W,T4,B9"
 -   repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.64.1
     hooks:
