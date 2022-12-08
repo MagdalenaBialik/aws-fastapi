@@ -29,8 +29,33 @@ resource "aws_iam_role" "fastapi_role" {
       }
     ]
   })
-
   name = "fastapi_role"
+}
+
+resource "aws_iam_policy" "function_logging_policy" {
+  name = "function-logging-policy"
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        Action : [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Effect : "Allow",
+        Resource : "arn:aws:logs:*:*:*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "function_logging_policy_attachment" {
+  role       = aws_iam_role.fastapi_role.id
+  policy_arn = aws_iam_policy.function_logging_policy.arn
+}
+
+resource "aws_cloudwatch_log_group" "lambda_logs" {
+  name = "/aws/lambda/${aws_lambda_function.fastapi.function_name}"
 
 }
 
@@ -42,6 +67,10 @@ resource "aws_lambda_function_url" "fastapi_lambda_url" {
 resource "aws_lambda_function" "fastapi" {
   function_name = "fastapi_lambda"
 
+  //  depends_on = [
+  //    aws_iam_role_policy_attachment.function_logging_policy_attachment,
+  //    aws_cloudwatch_log_group.lambda_logs,
+  //  ]
   role = aws_iam_role.fastapi_role.arn
 
   s3_bucket = "fastapi-artifacts"
@@ -49,6 +78,8 @@ resource "aws_lambda_function" "fastapi" {
 
   handler = "main.handler"
   runtime = "python3.8"
+
+
 
   environment {
     variables = {
@@ -62,16 +93,11 @@ resource "aws_dynamodb_table" "dynamodb_table" {
   read_capacity  = 5
   write_capacity = 5
   hash_key       = "PK"
-  //  range_key = "SK"
 
   attribute {
     name = "PK"
     type = "S"
   }
-  //
-  //  attribute {
-  //    name = "SK"
-  //    type = "N"
-  //  }
+
 
 }
