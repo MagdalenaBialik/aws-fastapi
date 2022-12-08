@@ -4,6 +4,7 @@ terraform {
     key    = "infra/terraform.tfstate"
     region = "eu-west-1"
   }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -66,12 +67,7 @@ resource "aws_lambda_function_url" "fastapi_lambda_url" {
 
 resource "aws_lambda_function" "fastapi" {
   function_name = "fastapi_lambda"
-
-  //  depends_on = [
-  //    aws_iam_role_policy_attachment.function_logging_policy_attachment,
-  //    aws_cloudwatch_log_group.lambda_logs,
-  //  ]
-  role = aws_iam_role.fastapi_role.arn
+  role          = aws_iam_role.fastapi_role.arn
 
   s3_bucket = "fastapi-artifacts"
   s3_key    = "${var.file_hash}.zip"
@@ -79,15 +75,13 @@ resource "aws_lambda_function" "fastapi" {
   handler = "main.handler"
   runtime = "python3.8"
 
-
-
   environment {
     variables = {
       DYNAMODB_TABLE_NAME = var.dynamodb_table_name
     }
   }
-
 }
+
 resource "aws_dynamodb_table" "dynamodb_table" {
   name           = "Travel-dynamodb-table"
   read_capacity  = 5
