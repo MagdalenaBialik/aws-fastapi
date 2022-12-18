@@ -2,4 +2,5 @@ uvicorn
 fastapi
 mangum #adapter for running app in AWS Lambda
 boto3
+wheel
 api/.
