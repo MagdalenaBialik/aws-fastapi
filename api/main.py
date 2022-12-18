@@ -1,10 +1,9 @@
 import os
 
 import boto3
+from dynamodb import DynamodbDao
 from fastapi import FastAPI
 from mangum import Mangum
-
-from api.dynamodb import DynamodbDao
 
 app = FastAPI()
 

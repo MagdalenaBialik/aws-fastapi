@@ -30,9 +30,6 @@ jobs:
           python-version: 3.8
       - name: install python dependencies
         run: |
-          cd api/
-          python setup.py install
-          cd ..
           pip3 install -r requirements.txt
           pip3 install -r tests/requirements.txt
       - name: Run Tests
