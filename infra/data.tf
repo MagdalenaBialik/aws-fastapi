@@ -1,10 +1,5 @@
-data "aws_region" "current" {
-
-}
-
-data "aws_caller_identity" "current" {
-
-}
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
 
 data "aws_iam_policy_document" "dynamodb_policy_document" {
   statement {
@@ -23,7 +18,8 @@ data "aws_iam_policy_document" "function_logging_policy_document" {
       "logs:CreateLogStream",
       "logs:PutLogEvents"
     ]
-    resources = ["arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_cloudwatch_log_group.lambda_logs.name}"]
-    effect    = "Allow"
+    resources = ["arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:${aws_cloudwatch_log_group.lambda_logs.name}:*"]
+
+    effect = "Allow"
   }
 }
