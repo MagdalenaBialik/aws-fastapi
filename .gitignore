@@ -5,5 +5,5 @@ api.zip
 dependencies/
 infra/.*
 infra/*.tfstate*
-api/tests/__pycache__/
+tests/__pycache__/
 .env
