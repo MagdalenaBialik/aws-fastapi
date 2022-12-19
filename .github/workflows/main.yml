@@ -56,8 +56,8 @@ jobs:
           cd ./dependencies && zip -r9 ../$file_hash .
           # add API files to Zip file
           cd ../api && zip -g ../$file_hash -r .
+          cd .. && zip -g ./$file_hash -r ./api
 
-          ls
           echo "file_hash=$file_hash" >> $GITHUB_OUTPUT
       - name: Install AWS CLI
         uses: unfor19/install-aws-cli-action@v1.0.4

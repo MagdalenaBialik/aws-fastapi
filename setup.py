@@ -1,3 +1,6 @@
-from distutils.core import setup
+from setuptools import find_packages, setup
 
-setup(name="aws-fastapi")
+setup(
+    name="aws-fastapi",
+    paackages=find_packages(exclude="tests*"),
+)
