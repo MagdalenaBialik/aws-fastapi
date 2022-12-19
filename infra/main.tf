@@ -80,16 +80,7 @@ resource "aws_lambda_function" "fastapi" {
   }
 }
 
-resource "aws_dynamodb_table" "dynamodb_table" {
-  name           = "Travel-dynamodb-table"
-  read_capacity  = 5
-  write_capacity = 5
-  hash_key       = "PK"
-
-  attribute {
-    name = "PK"
-    type = "S"
-  }
-
-
+module "dynamodb" {
+  source   = "./modules/dynamodb"
+  app_name = var.app_name
 }

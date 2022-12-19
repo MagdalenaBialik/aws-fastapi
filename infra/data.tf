@@ -6,7 +6,7 @@ data "aws_iam_policy_document" "dynamodb_policy_document" {
     actions = [
       "dynamodb:PutItem",
     ]
-    resources = ["arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/${aws_dynamodb_table.dynamodb_table.name}"]
+    resources = ["arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/${module.dynamodb.dynamodb_table_name}"]
 
     effect = "Allow"
   }
