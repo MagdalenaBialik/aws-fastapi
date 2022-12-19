@@ -17,6 +17,8 @@ repos:
     rev: 3.7.9
     hooks:
         - id: flake8
+          args:
+              - "--max-line-length=160"
 -   repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.64.1
     hooks:

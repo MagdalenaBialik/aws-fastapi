@@ -4,6 +4,7 @@ terraform {
     key    = "infra/terraform.tfstate"
     region = "eu-west-1"
   }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -29,8 +30,31 @@ resource "aws_iam_role" "fastapi_role" {
       }
     ]
   })
-
   name = "fastapi_role"
+}
+
+resource "aws_iam_policy" "function_logging_policy" {
+  name   = "function-logging-policy"
+  policy = data.aws_iam_policy_document.function_logging_policy_document.json
+}
+
+resource "aws_iam_role_policy_attachment" "function_logging_policy_attachment" {
+  role       = aws_iam_role.fastapi_role.id
+  policy_arn = aws_iam_policy.function_logging_policy.arn
+}
+
+resource "aws_iam_policy" "dynamodb_policy" {
+  name   = "dynamodb_policy"
+  policy = data.aws_iam_policy_document.dynamodb_policy_document.json
+}
+
+resource "aws_iam_role_policy_attachment" "dynamodb_policy_attachment" {
+  role       = aws_iam_role.fastapi_role.id
+  policy_arn = aws_iam_policy.dynamodb_policy.arn
+}
+
+resource "aws_cloudwatch_log_group" "lambda_logs" {
+  name = "/aws/lambda/${aws_lambda_function.fastapi.function_name}"
 
 }
 
@@ -41,13 +65,12 @@ resource "aws_lambda_function_url" "fastapi_lambda_url" {
 
 resource "aws_lambda_function" "fastapi" {
   function_name = "fastapi_lambda"
-
-  role = aws_iam_role.fastapi_role.arn
+  role          = aws_iam_role.fastapi_role.arn
 
   s3_bucket = "fastapi-artifacts"
   s3_key    = "${var.file_hash}.zip"
 
-  handler = "main.handler"
+  handler = "api.main.handler"
   runtime = "python3.8"
 
   environment {
@@ -55,5 +78,18 @@ resource "aws_lambda_function" "fastapi" {
       DYNAMODB_TABLE_NAME = var.dynamodb_table_name
     }
   }
+}
+
+resource "aws_dynamodb_table" "dynamodb_table" {
+  name           = "Travel-dynamodb-table"
+  read_capacity  = 5
+  write_capacity = 5
+  hash_key       = "PK"
+
+  attribute {
+    name = "PK"
+    type = "S"
+  }
+
 
 }

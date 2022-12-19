@@ -1,3 +1,4 @@
 pytest
 requests
 httpx
+boto3
