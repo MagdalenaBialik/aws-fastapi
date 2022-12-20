@@ -7,3 +7,5 @@ infra/.*
 infra/*.tfstate*
 tests/__pycache__/
 .env
+infra/modules/dynamodb/.terraform.lock.hcl
+infra/modules/dynamodb/.terraform/

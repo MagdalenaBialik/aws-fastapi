@@ -75,7 +75,7 @@ resource "aws_lambda_function" "fastapi" {
 
   environment {
     variables = {
-      DYNAMODB_TABLE_NAME = var.dynamodb_table_name
+      DYNAMODB_TABLE_NAME = module.dynamodb.dynamodb_table_name
     }
   }
 }
