@@ -9,3 +9,6 @@ tests/__pycache__/
 .env
 infra/modules/dynamodb/.terraform.lock.hcl
 infra/modules/dynamodb/.terraform/
+infra/modules/iam/.terraform.lock.hcl
+infra/modules/iam/.terraform/
+infra/modules/.terraform/
