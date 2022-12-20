@@ -5,11 +5,10 @@ resource "aws_lambda_function_url" "fastapi_lambda_url" {
 
 resource "aws_cloudwatch_log_group" "lambda_logs" {
   name = "/aws/lambda/${aws_lambda_function.fastapi.function_name}"
-
 }
 
 resource "aws_lambda_function" "fastapi" {
-  function_name = "fastapi_lambda"
+  function_name = "${var.app_name}-lambda"
   role          = var.lambda_role
   s3_bucket     = "fastapi-artifacts"
   s3_key        = "${var.file_hash}.zip"
