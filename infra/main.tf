@@ -17,40 +17,15 @@ provider "aws" {
   region = "eu-west-1"
 }
 
-resource "aws_iam_role" "fastapi_role" {
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Sid    = ""
-      Principal = {
-        Service = "lambda.amazonaws.com"
-      }
-      }
-    ]
-  })
-  name = "fastapi_role"
+module "dynamodb" {
+  source   = "./modules/dynamodb"
+  app_name = var.app_name
 }
 
-resource "aws_iam_policy" "function_logging_policy" {
-  name   = "function-logging-policy"
-  policy = data.aws_iam_policy_document.function_logging_policy_document.json
-}
-
-resource "aws_iam_role_policy_attachment" "function_logging_policy_attachment" {
-  role       = aws_iam_role.fastapi_role.id
-  policy_arn = aws_iam_policy.function_logging_policy.arn
-}
-
-resource "aws_iam_policy" "dynamodb_policy" {
-  name   = "dynamodb_policy"
-  policy = data.aws_iam_policy_document.dynamodb_policy_document.json
-}
-
-resource "aws_iam_role_policy_attachment" "dynamodb_policy_attachment" {
-  role       = aws_iam_role.fastapi_role.id
-  policy_arn = aws_iam_policy.dynamodb_policy.arn
+module "iam" {
+  source              = "./modules/iam"
+  app_name            = var.app_name
+  dynamodb_table_name = module.dynamodb.dynamodb_table_name
 }
 
 resource "aws_cloudwatch_log_group" "lambda_logs" {
@@ -65,7 +40,7 @@ resource "aws_lambda_function_url" "fastapi_lambda_url" {
 
 resource "aws_lambda_function" "fastapi" {
   function_name = "fastapi_lambda"
-  role          = aws_iam_role.fastapi_role.arn
+  role          = module.iam.iam_role_name
 
   s3_bucket = "fastapi-artifacts"
   s3_key    = "${var.file_hash}.zip"
@@ -78,9 +53,4 @@ resource "aws_lambda_function" "fastapi" {
       DYNAMODB_TABLE_NAME = module.dynamodb.dynamodb_table_name
     }
   }
-}
-
-module "dynamodb" {
-  source   = "./modules/dynamodb"
-  app_name = var.app_name
 }
