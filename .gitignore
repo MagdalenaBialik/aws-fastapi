@@ -1,9 +1,9 @@
 venv/
 .idea/
-api/__pycache__/
+
 api.zip
 dependencies/
-infra/.*
-infra/*.tfstate*
-tests/__pycache__/
-.env
+
+**/*.tfstate*
+**/__pycache__/
+**/.terraform*

@@ -19,7 +19,7 @@ async def root():
 
 @app.get("/variable")
 def variable():
-    return os.environ.get("DYNAMODB_TABLE_NAME", "fastapi_table")
+    return os.environ["DYNAMODB_TABLE_NAME"]
 
 
 @app.get("/attraction")
