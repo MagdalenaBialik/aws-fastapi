@@ -35,3 +35,8 @@ module "lambda" {
   lambda_role         = module.iam.iam_role_arn
   file_hash           = var.file_hash
 }
+
+resource "aws_lambda_function_url" "fastapi_lambda_url" {
+  function_name      = module.lambda.lambda_function
+  authorization_type = "NONE"
+}
