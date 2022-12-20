@@ -40,7 +40,7 @@ resource "aws_lambda_function_url" "fastapi_lambda_url" {
 
 resource "aws_lambda_function" "fastapi" {
   function_name = "fastapi_lambda"
-  role          = module.iam.iam_role_name
+  role          = module.iam.iam_role_arn
 
   s3_bucket = "fastapi-artifacts"
   s3_key    = "${var.file_hash}.zip"
