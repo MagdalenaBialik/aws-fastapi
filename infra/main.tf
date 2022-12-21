@@ -1,10 +1,16 @@
 terraform {
-  cloud {
-    organization = "bialik-magdalena"
+#  cloud {
+#    organization = "bialik-magdalena"
+#
+#    workspaces {
+#      name = "aws-fastapi"
+#    }
+#  }
 
-    workspaces {
-      name = "aws-fastapi"
-    }
+  backend "s3" {
+    bucket = "fastapi-tf-bucket"
+    key    = "infra/terraform.tfstate"
+    region = "eu-west-1"
   }
 
   required_providers {
