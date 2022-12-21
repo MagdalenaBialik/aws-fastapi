@@ -1,11 +1,11 @@
 terraform {
-#  cloud {
-#    organization = "bialik-magdalena"
-#
-#    workspaces {
-#      name = "aws-fastapi"
-#    }
-#  }
+  #  cloud {
+  #    organization = "bialik-magdalena"
+  #
+  #    workspaces {
+  #      name = "aws-fastapi"
+  #    }
+  #  }
 
   backend "s3" {
     bucket = "fastapi-tf-bucket"
