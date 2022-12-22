@@ -48,4 +48,4 @@ jobs:
             }
           }
           EOL
-          yes yes | terraform init
+          printf "yes" | terraform init
