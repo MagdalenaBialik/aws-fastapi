@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-          cache: pip3
+          cache: pip
       - name: install pre-commit
         run: pip3 install pre-commit
       - name: run pre-commit
@@ -32,7 +32,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-          cache: pip3
+          cache: pip
       - name: install python dependencies
         run: |
           pip3 install -r requirements.txt
