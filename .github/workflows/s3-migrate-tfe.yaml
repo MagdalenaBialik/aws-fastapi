@@ -47,4 +47,4 @@ jobs:
             }
           }
           EOL
-          terraform init -input=false
+          echo "YES" | terraform init
