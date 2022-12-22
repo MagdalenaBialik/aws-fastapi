@@ -40,7 +40,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
       - name: install python dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
+#        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           pip3 install -r requirements.txt
           pip3 install -r tests/requirements.txt
