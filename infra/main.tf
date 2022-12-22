@@ -3,7 +3,7 @@ terraform {
     organization = "bialik-magdalena"
 
     workspaces {
-      name = "aws-fastapi2"
+      name = "aws-fastapi"
     }
   }
 
