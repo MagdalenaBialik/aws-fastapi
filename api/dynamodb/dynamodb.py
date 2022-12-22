@@ -9,8 +9,7 @@ class DynamodbDao:
         self.dynamodb_client.put_item(
             TableName=os.environ["DYNAMODB_TABLE_NAME"],
             Item={
-                "PK": {"S": country},
-                "SK": {"S": city},
-                "Attraction": {"S": attraction},
+                "PK": {"S": city},
+                "SK": {"S": attraction},
             },
         )
