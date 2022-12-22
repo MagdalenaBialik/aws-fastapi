@@ -24,7 +24,7 @@ def variable():
 
 @app.get("/attraction")
 def attraction(country, city, attraction_name):
-    return dynamodb_dao.put_attraction(country, city, attraction_name)
+    return dynamodb_dao.put_attraction(city, attraction_name)
 
 
 handler = Mangum(app=app)
