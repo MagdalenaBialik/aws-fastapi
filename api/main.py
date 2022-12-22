@@ -23,7 +23,7 @@ def variable():
 
 
 @app.get("/attraction")
-def attraction(country, city, attraction_name):
+def attraction(city, attraction_name):
     return dynamodb_dao.put_attraction(city, attraction_name)
 
 
