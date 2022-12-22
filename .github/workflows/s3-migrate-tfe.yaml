@@ -34,21 +34,12 @@ jobs:
           EOL
           terraform init
 
-      - name: Initialize Local Backend
-        run: |
-          cd migration
-          cat > migration.tf <<EOL
-          terraform {
-          }
-          EOL
-          terraform init -migrate-state -force-copy
-
       - name: Initialize TFE Backend
         run: |
           cd migration
           cat > migration.tf <<EOL
           terraform {
-            cloud {
+            backend "remote" {
               organization = "bialik-magdalena"
               workspaces {
                 name = "aws-fastapi2"
