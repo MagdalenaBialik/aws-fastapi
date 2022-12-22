@@ -94,4 +94,4 @@ jobs:
       - name: Terraform Init
         run: terraform init
       - name: Terraform Apply
-        run: terraform plan -input=false -var-file="variable.tfvars" -var "file_hash=e83ce91f340997820d3d9a5e9e65fba7a2addcc02adc90fcdfdf7d4bd76f1b4b"
+        run: terraform plan -input=false -var-file="variable.tfvars" -var "file_hash=${{needs.Build-artifacts.outputs.file_hash1}}"
