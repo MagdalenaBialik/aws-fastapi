@@ -47,9 +47,4 @@ jobs:
             }
           }
           EOL
-          cat > migrate.sh <<EOL
-          #!/usr/bin/bash
-          yes yes | terraform init
-          EOL
-          chmod +x migrate.sh
-          ./migrate.sh
+          terraform init -input=false
