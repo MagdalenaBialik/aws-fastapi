@@ -34,6 +34,15 @@ jobs:
           EOL
           terraform init
 
+      - name: Initialize Local Backend
+        run: |
+          cd migration
+          cat > migration.tf <<EOL
+          terraform {
+          }
+          EOL
+          terraform init -migrate-state -force-copy
+
       - name: Initialize TFE Backend
         run: |
           cd migration
@@ -47,4 +56,4 @@ jobs:
             }
           }
           EOL
-          echo "YES" | terraform init
+          terraform init -migrate-state -force-copy
