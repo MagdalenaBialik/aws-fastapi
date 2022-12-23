@@ -15,17 +15,19 @@ class DynamodbDao:
         )
 
     def get_attraction(self, city, attraction):
-        return self.dynamodb_client.get_item(
+        response = self.dynamodb_client.get_item(
             TableName=os.environ["DYNAMODB_TABLE_NAME"],
             Key={
                 "PK": {"S": city},
                 "SK": {"S": attraction},
             },
         )
+        return response["Item"]
 
     def get_attraction_by_city(self, city):
-        return self.dynamodb_client.query(
+        response = self.dynamodb_client.query(
             TableName=os.environ["DYNAMODB_TABLE_NAME"],
             KeyConditionExpression="PK= :PK",
             ExpressionAttributeValues={":PK": {"S": city}},
         )
+        return response["Items"]
