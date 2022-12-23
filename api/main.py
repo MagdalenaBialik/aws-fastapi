@@ -27,4 +27,14 @@ def attraction(city, attraction_name):
     return dynamodb_dao.put_attraction(city, attraction_name)
 
 
+@app.get("/get_attraction")
+def get_attraction(city, attraction_name):
+    return dynamodb_dao.get_attraction(city, attraction_name)
+
+
+@app.get("/get_attraction_by_city")
+def get_attraction_by_city(city):
+    return dynamodb_dao.get_attraction_by_city(city)
+
+
 handler = Mangum(app=app)
