@@ -26,7 +26,7 @@ class DynamodbDao:
     def get_attraction_by_city(self, city):
         return self.dynamodb_client.query(
             TableName=os.environ["DYNAMODB_TABLE_NAME"],
-            Key={
-                "PK": {"S": city},
+            KeyConditionExpression={
+                "PK = :PK",
             },
         )
