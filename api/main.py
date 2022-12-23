@@ -9,8 +9,10 @@ from api.dynamodb.dynamodb import DynamodbDao
 
 app = FastAPI()
 
-dynamodb_client = boto3.client(service_name="dynamodb", region_name="eu-west-1")
-dynamodb_dao = DynamodbDao(dynamodb_client=dynamodb_client)
+dynamodb_table = boto3.resource(service_name="dynamodb", region_name="eu-west-1").Table(
+    os.environ["DYNAMODB_TABLE_NAME"]
+)
+dynamodb_dao = DynamodbDao(dynamodb_table=dynamodb_table)
 
 
 @app.get("/")
