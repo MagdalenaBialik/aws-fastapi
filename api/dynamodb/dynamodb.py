@@ -13,3 +13,12 @@ class DynamodbDao:
                 "SK": {"S": attraction.title()},
             },
         )
+
+    def get_attraction(self, city, attraction):
+        self.dynamodb_client.get_item(
+            TableName=os.environ["DYNAMODB_TABLE_NAME"],
+            Key={
+                "PK": city,
+                "SK": attraction,
+            },
+        )
