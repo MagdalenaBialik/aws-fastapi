@@ -18,7 +18,7 @@ class DynamodbDao:
         self.dynamodb_client.get_item(
             TableName=os.environ["DYNAMODB_TABLE_NAME"],
             Key={
-                "PK": city,
-                "SK": attraction,
+                "PK": {"S": city},
+                "SK": {"S": attraction},
             },
         )
