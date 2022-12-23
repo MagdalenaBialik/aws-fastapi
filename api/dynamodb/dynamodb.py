@@ -22,7 +22,7 @@ class DynamodbDao:
                 "SK": {"S": attraction},
             },
         )
-        return response["Item"]
+        return response.get("Item", None)
 
     def get_attraction_by_city(self, city):
         response = self.dynamodb_client.query(
