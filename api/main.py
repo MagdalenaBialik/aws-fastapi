@@ -23,9 +23,10 @@ def variable():
     return os.environ["DYNAMODB_TABLE_NAME"]
 
 
-@app.get("/attraction")
-def attraction(city, attraction_name):
-    return dynamodb_dao.put_attraction(city, attraction_name)
+@app.post("/put_attraction", status_code=201)
+def put_attraction(city, attraction_name):
+    dynamodb_dao.put_attraction(city, attraction_name)
+    return "Item successfully added"
 
 
 @app.get("/get_attraction")
