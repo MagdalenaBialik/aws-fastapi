@@ -15,7 +15,7 @@ class DynamodbDao:
         )
 
     def get_attraction(self, city, attraction):
-        self.dynamodb_client.get_item(
+        return self.dynamodb_client.get_item(
             TableName=os.environ["DYNAMODB_TABLE_NAME"],
             Key={
                 "PK": {"S": city},
