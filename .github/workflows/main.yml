@@ -39,7 +39,7 @@ jobs:
         run: pytest
 
   Build-artifacts:
-    needs: [tests, pre-commit]
+    needs: [pre-commit]
     runs-on: ubuntu-latest
     outputs:
       file_hash1: ${{ steps.create-package.outputs.file_hash }}

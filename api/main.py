@@ -1,4 +1,3 @@
-import os
 from http import HTTPStatus
 
 import boto3
@@ -6,11 +5,16 @@ from fastapi import FastAPI, HTTPException
 from mangum import Mangum
 
 from api.dynamodb.dynamodb import DynamodbDao
+from api.settings import get_settings
+
+settings = get_settings()
 
 app = FastAPI()
 
-dynamodb_client = boto3.client(service_name="dynamodb", region_name="eu-west-1")
-dynamodb_dao = DynamodbDao(dynamodb_client=dynamodb_client)
+dynamodb_table = boto3.resource(service_name="dynamodb", region_name="eu-west-1").Table(
+    settings.DYNAMODB_TABLE_NAME
+)
+dynamodb_dao = DynamodbDao(dynamodb_table=dynamodb_table, settings=settings)
 
 
 @app.get("/")
@@ -20,7 +24,7 @@ async def root():
 
 @app.get("/variable")
 def variable():
-    return os.environ["DYNAMODB_TABLE_NAME"]
+    return settings.DYNAMODB_TABLE_NAME
 
 
 @app.post("/put_attraction", status_code=201)

@@ -1,33 +1,32 @@
-import os
+from boto3.dynamodb.conditions import Key
+
+from api.settings import Settings
 
 
 class DynamodbDao:
-    def __init__(self, dynamodb_client):
-        self.dynamodb_client = dynamodb_client
+    def __init__(self, dynamodb_table, settings: Settings):
+        self.dynamodb_table = dynamodb_table
+        self.settings = settings
 
     def put_attraction(self, city: str, attraction: str):
-        self.dynamodb_client.put_item(
-            TableName=os.environ["DYNAMODB_TABLE_NAME"],
+        self.dynamodb_table.put_item(
             Item={
-                "PK": {"S": city.title()},
-                "SK": {"S": attraction.title()},
+                "PK": city.title(),
+                "SK": attraction.title(),
             },
         )
 
     def get_attraction(self, city, attraction):
-        response = self.dynamodb_client.get_item(
-            TableName=os.environ["DYNAMODB_TABLE_NAME"],
+        response = self.dynamodb_table.get_item(
             Key={
-                "PK": {"S": city},
-                "SK": {"S": attraction},
+                "PK": city,
+                "SK": attraction,
             },
         )
         return response.get("Item", None)
 
     def get_attraction_by_city(self, city):
-        response = self.dynamodb_client.query(
-            TableName=os.environ["DYNAMODB_TABLE_NAME"],
-            KeyConditionExpression="PK= :PK",
-            ExpressionAttributeValues={":PK": {"S": city}},
+        response = self.dynamodb_table.query(
+            KeyConditionExpression=Key("PK").eq(city),
         )
         return response["Items"]
