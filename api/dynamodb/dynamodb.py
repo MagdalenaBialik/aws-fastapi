@@ -1,15 +1,15 @@
-import os
-
 from boto3.dynamodb.conditions import Key
+
+from api.settings import Settings
 
 
 class DynamodbDao:
-    def __init__(self, dynamodb_table):
+    def __init__(self, dynamodb_table, settings: Settings):
         self.dynamodb_table = dynamodb_table
+        self.settings = settings
 
     def put_attraction(self, city: str, attraction: str):
         self.dynamodb_table.put_item(
-            TableName=os.environ["DYNAMODB_TABLE_NAME"],
             Item={
                 "PK": city.title(),
                 "SK": attraction.title(),
@@ -18,7 +18,6 @@ class DynamodbDao:
 
     def get_attraction(self, city, attraction):
         response = self.dynamodb_table.get_item(
-            TableName=os.environ["DYNAMODB_TABLE_NAME"],
             Key={
                 "PK": city,
                 "SK": attraction,
@@ -28,7 +27,6 @@ class DynamodbDao:
 
     def get_attraction_by_city(self, city):
         response = self.dynamodb_table.query(
-            TableName=os.environ["DYNAMODB_TABLE_NAME"],
             KeyConditionExpression=Key("PK").eq(city),
         )
         return response["Items"]
