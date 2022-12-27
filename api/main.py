@@ -47,6 +47,17 @@ def get_attraction_by_city(city):
     return dynamodb_dao.get_attraction_by_city(city)
 
 
+@app.delete("/delete_attraction")
+def delete_attraction(city, attraction_name):
+    response = dynamodb_dao.delete_item(city, attraction_name)
+    if response is None:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail=f"No {attraction_name} was found in the {city}",
+        )
+    return response
+
+
 handler = Mangum(app=app)
 
 if __name__ == "__main__":
