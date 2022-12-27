@@ -31,10 +31,11 @@ class DynamodbDao:
         )
         return response["Items"]
 
-    def delete_item_(self, city, attraction):
+    def delete_item(self, city, attraction):
         self.dynamodb_table.delete_item(
             Key={
                 "PK": city,
                 "SK": attraction,
             }
         )
+        return "Deleted"

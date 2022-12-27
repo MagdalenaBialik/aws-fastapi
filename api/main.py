@@ -49,7 +49,12 @@ def get_attraction_by_city(city):
 
 @app.delete("/delete_attraction")
 def delete_attraction(city, attraction_name):
-    dynamodb_dao.delete_item_(city, attraction_name)
+    response = dynamodb_dao.delete_item(city, attraction_name)
+    if not response:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail=f"No {attraction_name} was found in the {city}",
+        )
     return "Attraction deleted"
 
 
