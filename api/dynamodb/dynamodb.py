@@ -30,3 +30,11 @@ class DynamodbDao:
             KeyConditionExpression=Key("PK").eq(city),
         )
         return response["Items"]
+
+    def delete_item_(self, city, attraction):
+        self.dynamodb_table.delete_item(
+            Key={
+                "PK": city,
+                "SK": attraction,
+            }
+        )
