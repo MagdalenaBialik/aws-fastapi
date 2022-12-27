@@ -42,7 +42,7 @@ jobs:
           tfe_backend_workspace: ${{ inputs.tfe_backend_workspace }}
           tfe_backend_organization: ${{ inputs.tfe_backend_organization }}
         run: |
-          cd migration
+          mkdir migration && cd migration
           cat > migration.tf <<EOL
           terraform {
             backend "remote" {
@@ -61,7 +61,8 @@ jobs:
           s3_backend_bucket: ${{ inputs.s3_backend_bucket }}
           s3_backend_region: ${{ inputs.s3_backend_region }}
         run: |
-          mkdir migration && cd migration
+
+          cd migration
           cat > migration.tf <<EOL
           terraform {
             backend "s3" {
