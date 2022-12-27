@@ -36,23 +36,6 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-      - name: Initialize S3 Backend
-        env:
-          s3_backend_key: ${{ inputs.s3_backend_key }}
-          s3_backend_bucket: ${{ inputs.s3_backend_bucket }}
-          s3_backend_region: ${{ inputs.s3_backend_region }}
-        run: |
-          mkdir migration && cd migration
-          cat > migration.tf <<EOL
-          terraform {
-            backend "s3" {
-              key            = "$s3_backend_key"
-              bucket         = "$s3_backend_bucket"
-              region         = "$s3_backend_region"
-            }
-          }
-          EOL
-          terraform init
 
       - name: Initialize TFE Backend
         env:
@@ -70,4 +53,40 @@ jobs:
             }
           }
           EOL
+          terraform init
+
+      - name: Initialize S3 Backend
+        env:
+          s3_backend_key: ${{ inputs.s3_backend_key }}
+          s3_backend_bucket: ${{ inputs.s3_backend_bucket }}
+          s3_backend_region: ${{ inputs.s3_backend_region }}
+        run: |
+          mkdir migration && cd migration
+          cat > migration.tf <<EOL
+          terraform {
+            backend "s3" {
+              key            = "$s3_backend_key"
+              bucket         = "$s3_backend_bucket"
+              region         = "$s3_backend_region"
+            }
+          }
+          EOL
           terraform init -migrate-state -force-copy
+
+#      - name: Initialize TFE Backend
+#        env:
+#          tfe_backend_workspace: ${{ inputs.tfe_backend_workspace }}
+#          tfe_backend_organization: ${{ inputs.tfe_backend_organization }}
+#        run: |
+#          cd migration
+#          cat > migration.tf <<EOL
+#          terraform {
+#            backend "remote" {
+#              organization = "$tfe_backend_organization"
+#              workspaces {
+#                name = "$tfe_backend_workspace"
+#              }
+#            }
+#          }
+#          EOL
+#          terraform init -migrate-state -force-copy

@@ -9,7 +9,7 @@ jobs:
     uses: ./.github/workflows/reusable_migration.yaml
     secrets: inherit
     with:
-      s3_backend_key: infra/terraform.tfstate
+      s3_backend_key: infra/test.tfstate
       s3_backend_bucket: fastapi-tf-bucket
       s3_backend_region: eu-west-1
       tfe_backend_workspace: aws-fastapi2
