@@ -5,6 +5,7 @@ from fastapi import FastAPI, HTTPException
 from mangum import Mangum
 
 from api.dynamodb.dynamodb import DynamodbDao
+from api.schemas import Attraction
 from api.settings import get_settings
 
 settings = get_settings()
@@ -28,14 +29,14 @@ def variable():
 
 
 @app.post("/put_attraction", status_code=201)
-def put_attraction(city, attraction_name):
-    dynamodb_dao.put_attraction(city, attraction_name)
+def put_attraction(attraction: Attraction):
+    dynamodb_dao.put_attraction(attraction)
     return "Item successfully added"
 
 
-@app.get("/get_attraction")
-def get_attraction(city, attraction_name):
-    response = dynamodb_dao.get_attraction(city, attraction_name)
+@app.post("/get_attraction")
+def get_attraction(attraction: Attraction) -> Attraction:
+    response = dynamodb_dao.get_attraction(attraction)
     if response is None:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Item not found")
 
@@ -43,17 +44,17 @@ def get_attraction(city, attraction_name):
 
 
 @app.get("/get_attraction_by_city")
-def get_attraction_by_city(city):
+def get_attraction_by_city(city) -> Attraction:
     return dynamodb_dao.get_attraction_by_city(city)
 
 
 @app.delete("/delete_attraction")
-def delete_attraction(city, attraction_name):
-    response = dynamodb_dao.delete_item(city, attraction_name)
+def delete_attraction(attraction: Attraction) -> Attraction:
+    response = dynamodb_dao.delete_item(attraction)
     if response is None:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
-            detail=f"No {attraction_name} was found in the {city}",
+            detail=f"No {attraction.name} was found in the {attraction.city}",
         )
     return response
 

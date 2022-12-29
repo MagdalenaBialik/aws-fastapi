@@ -1,5 +1,6 @@
 from boto3.dynamodb.conditions import Key
 
+from api.schemas import Attraction
 from api.settings import Settings
 
 
@@ -8,37 +9,43 @@ class DynamodbDao:
         self.dynamodb_table = dynamodb_table
         self.settings = settings
 
-    def put_attraction(self, city: str, attraction: str):
+    def put_attraction(self, attraction: Attraction):
         self.dynamodb_table.put_item(
             Item={
-                "PK": city.title(),
-                "SK": attraction.title(),
+                "PK": attraction.city.title(),
+                "SK": attraction.name.title(),
             },
         )
 
-    def get_attraction(self, city, attraction):
+    def attraction_from_item(self, item: dict) -> Attraction:
+        return Attraction(city=item["PK"], name=item["SK"])
+
+    def key_from_attraction(self, attraction: Attraction) -> dict:
+        key = {"PK": attraction.city, "SK": attraction.name}
+        return key
+
+    def get_attraction(self, attraction: Attraction) -> Attraction:
         response = self.dynamodb_table.get_item(
-            Key={
-                "PK": city,
-                "SK": attraction,
-            },
+            Key=self.key_from_attraction(attraction),
         )
-        return response.get("Item", None)
+        item = response.get("Item", None)
+
+        return self.attraction_from_item(item)
 
     def get_attraction_by_city(self, city):
         response = self.dynamodb_table.query(
             KeyConditionExpression=Key("PK").eq(city),
         )
-        return response["Items"]
+        items = response["Items"]
+        list_of_attractions = [self.attraction_from_item(item) for item in items]
 
-    def delete_item(self, city, attraction):
-        if self.get_attraction(city, attraction) is None:
+        return list_of_attractions
+
+    def delete_item(self, attraction: Attraction):
+        if self.get_attraction(attraction) is None:
             return None
 
         response = self.dynamodb_table.delete_item(
-            Key={
-                "PK": city,
-                "SK": attraction,
-            }
+            Key=self.key_from_attraction(attraction)
         )
         return response
