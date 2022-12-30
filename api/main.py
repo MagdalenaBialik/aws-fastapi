@@ -44,7 +44,7 @@ def get_attraction(attraction: Attraction) -> Attraction:
 
 
 @app.get("/get_attraction_by_city")
-def get_attraction_by_city(city) -> Attraction:
+def get_attraction_by_city(city: str) -> Attraction:
     return dynamodb_dao.get_attraction_by_city(city)
 
 
