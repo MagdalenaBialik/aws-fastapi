@@ -1,0 +1,2 @@
+class AttractionNotFoundError(Exception):
+    pass
