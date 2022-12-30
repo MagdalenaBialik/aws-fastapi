@@ -1,6 +1,6 @@
 from boto3.dynamodb.conditions import Key
 
-from api.exceptions import NotFoundError
+from api.exceptions import AttractionNotFoundError
 from api.schemas import Attraction
 from api.settings import Settings
 
@@ -28,7 +28,7 @@ class DynamodbDao:
         )
         item = response.get("Item", None)
         if item is None:
-            return NotFoundError("Attraction not found")
+            return AttractionNotFoundError("Attraction not found")
 
         return self._attraction_from_item(item)
 
