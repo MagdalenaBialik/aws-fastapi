@@ -28,7 +28,7 @@ class DynamodbDao:
         )
         item = response.get("Item", None)
         if item is None:
-            raise AttractionNotFoundError("Attraction not found")
+            raise AttractionNotFoundError("Attraction not found in dynamodb table")
 
         return self._attraction_from_item(item)
 

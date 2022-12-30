@@ -5,6 +5,7 @@ from fastapi import FastAPI, HTTPException
 from mangum import Mangum
 
 from api.dynamodb.dynamodb import DynamodbDao
+from api.exceptions import AttractionNotFoundError
 from api.schemas import Attraction
 from api.settings import get_settings
 
@@ -36,10 +37,10 @@ def put_attraction(attraction: Attraction):
 
 @app.post("/get_attraction")
 def get_attraction(attraction: Attraction) -> Attraction:
-    response = dynamodb_dao.get_attraction(attraction)
-    if response is None:
+    try:
+        response = dynamodb_dao.get_attraction(attraction)
+    except AttractionNotFoundError:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Item not found")
-
     return response
 
 
